@@ -221,8 +221,13 @@ patient_date = patient_yes_date.append(patient_no_date)
 data_converted_date = patients_pad
 data_converted_map = data_converted_date.merge(word_map, on = 'ObsResult')
 data_converted_map = data_converted_map.sort_values(['PatientID', 'ResultDate'], ascending=[True, True])
+data_converted_map['Outcome'] = 0
+ID_pat_yes = data_converted_yes['PatientID'].drop_duplicates().tolist()
+idx_pat_yes = data_converted_map[data_converted_map['PatientID'].isin(ID_pat_yes)].index.tolist()
+data_converted_map['Outcome'][idx_pat_yes] = 1
+unique_patients = data_converted_map[['PatientID', 'Outcome']].drop_duplicates()
 # feature = data_converted_map.drop(['ObsResult'], axis = 1)
-feature = data_converted_map.drop(['ObsResult','ResultDate'], axis = 1)
+feature = data_converted_map.drop(['ObsResult', 'ResultDate', 'Outcome'], axis = 1)
 
 chd = feature
 id_chd = chd['PatientID'].unique()
